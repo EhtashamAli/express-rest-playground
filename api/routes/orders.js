@@ -35,13 +35,27 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-    let order = {
-        orderId: req.body.orderId,
+    const order = new Order( {
+        _id : new mongoose.Types.ObjectId(),
+        productId: req.body.productId,
         qty: req.body.qty
-    }
-    res.status(201).json({
-        message: 'post on orders',
-        details: order
+    });
+    order
+    .save()
+    .then(result => {
+        res.status(200).json({
+            order : {
+                id : result._id,
+                productId : result.productId,
+                qty : result.qty
+            },
+            message : "Order Added"
+        });
+    })
+    .catch(err => {
+        res.status(500).json({
+            errMessage : err
+        });
     });
 });
 
